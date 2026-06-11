@@ -1,97 +1,99 @@
-﻿namespace LeetCodePractice;
+﻿using System.ComponentModel.Design;
+using System.Numerics;
 
+namespace LeetCodePractice;
 
-public class SegmentTree
-{
-    public struct Node
-    {
-        public long suru, ses, mx, mn;
-        public void Init(long l,long r, long[] a)
-        {
-            suru = l; ses = r;
-            if(l == r)
-            {
-                mx = mn = a[l];
-            }
-        }
-    }
-    private Node[] g;
-    private long[] a;
-    
-    public SegmentTree(int maxN, long[] inputArray)
-    {
-        g = new Node[4 * maxN];
-        a = inputArray;
-    }
-    public void Build(long cn, long l, long r)
-    {
-        g[cn].Init(l, r, a);
-
-        if (l == r) return;
-        long md = l + (r - l) / 2;
-
-        Build(cn * 2, l, md);
-        Build(cn * 2 + 1, md + 1, r);
-
-        g[cn].mx = Math.Max(g[cn * 2].mx, g[cn * 2 + 1].mx);
-        g[cn].mn = Math.Min(g[cn * 2].mn, g[cn * 2 + 1].mn);
-    }
-    public (long , long) Query(long cn, long l, long r)
-    {
-        long x = g[cn].suru;
-        long y = g[cn].ses;
-
-        if (y < l || x > r) return (0,long.MaxValue);
-
-        if (l <= x && r >= y)
-            return (g[cn].mx, g[cn].mn);
-
-        var p = Query(cn * 2, l, r);
-        var q = Query(cn * 2 + 1, l, r);
-        return ((Math.Max(p.Item1, q.Item1)), (Math.Min(p.Item2, q.Item2)));
-    }
-}
 public class Solution
 {
-    public long MaxTotalValue(int[] nums, int k)
+    public const int mod = (int)1e9 + 7;
+    int[] depth = new int[100005];
+    List<int>[] g = new List<int>[100005];
+    long[] fact = new long[100005];
+
+    void dfs(int nd, int p)
     {
-        int n = nums.Length;
-        long[] a = new long[n + 1];
-        for (int i = 0; i < n; i++) a[i + 1] = nums[i];
-
-        SegmentTree stre = new SegmentTree(n+1, a);
-        stre.Build(1, 1, n);
-
-        var maxHeapComparer = Comparer<(long val, long left, long right)>.Create((x, y) => y.CompareTo(x));
-        var pq = new PriorityQueue<(long val, long left, long right), (long val, long left, long right)>(maxHeapComparer);
-
-        var val = stre.Query(1, 1, n);
-        pq.Enqueue((val.Item1 - val.Item2, 1, n), (val.Item1 - val.Item2, 1, n));
-        long ans = 0;
-
-        while (k > 0)
+        foreach (var child in g[nd])
         {
-            k--;
-            var current = pq.Dequeue();
-            ans += current.val;
-            var val1 = stre.Query(1, current.left + 1, current.right);
-            var val2 = stre.Query(1, current.left, current.right - 1);
+            if (child == p) continue;
 
-            pq.Enqueue((val1.Item1 - val1.Item2,current.left + 1,current.right), (val1.Item1 - val1.Item2, current.left + 1, current.right));
-            pq.Enqueue((val2.Item1 - val2.Item2, current.left,current.right - 1), (val2.Item1 - val2.Item2, current.left, current.right - 1));
+            depth[child] = depth[nd] + 1;
+            dfs(child, nd);
         }
-
+    }
+    long bigmod(long a,long n)
+    {
+        long ans = 1;
+        while(n > 0)
+        {
+            if(n % 2 == 0)
+            {
+                n /= 2;
+                a = (a * a) % mod;
+            }
+            else
+            {
+                n--;
+                ans = (ans * a) % mod;
+            }
+        }
         return ans;
-     }
+    }
+    long calc(int n)
+    {
+        long ans =  0;
+        for (int i = 1; i <= n; i += 2)
+        {
+            // n! / (i! * (n - i)!
+            long num = fact[n];
+
+            long denom = (fact[i] * fact[n - i]) % mod;
+
+            long currentComb = (num * bigmod(denom, mod - 2)) % mod;
+ 
+            ans = (ans + currentComb) % mod;
+        }
+         
+        return ans;
+    }
+    void factorial()
+    {
+        fact[0] = 1;
+        for (int i = 1; i < 100005; i++)
+        {
+            fact[i] = (fact[i - 1] * i) % mod;
+        }
+    }
+    public long AssignEdgeWeights(int[][] edges)
+    {
+        factorial();
+        int n = 100005;
+
+        for (int i = 0; i < n; i++)
+        {
+            g[i] = new List<int>();
+        }
+        foreach (var edge in edges)
+        {
+            if (edge != null && (int)edge.Length >= 2)
+            {
+                g[edge[0]].Add(edge[1]);
+                g[edge[1]].Add(edge[0]);
+            }
+        }
+        dfs(1, 0);
+        int maxDepth = depth.Max();
+       
+        return calc(maxDepth);
+    }
 }
 internal class Program
 {
     static void Main(string[] args)
     {
         Solution solution = new Solution();
-        int[] nums = { 4, 3, 2 };
-        int pivot = 2;
-        long result = solution.MaxTotalValue(nums, pivot);
+        int[][] edges = [[1, 2], [1, 3], [3, 4], [3, 5]];
+
+        long result = solution.AssignEdgeWeights(edges);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

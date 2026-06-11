@@ -91,16 +91,4 @@ internal class SegmentTreeAndPriorityQueueLeetCode3691
             return ans;
         }
     }
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            Solution solution = new Solution();
-            int[] nums = { 4, 3, 2 };
-            int pivot = 2;
-            long result = solution.MaxTotalValue(nums, pivot);
-            Console.WriteLine(string.Join(", ", result));
-            Console.ReadLine();
-        }
-    }
 }

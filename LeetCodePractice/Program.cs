@@ -4,23 +4,35 @@ using System.Runtime.InteropServices.Marshalling;
 
 namespace LeetCodePractice;
 
+ 
+  public class ListNode {
+      public int val;
+      public ListNode next;
+      public ListNode(int val=0, ListNode next=null) {
+          this.val = val;
+          this.next = next;
+      }
+  }
+
 public class Solution
 {
-    public string MapWordWeights(string[] words, int[] weights)
+    public int PairSum(ListNode head)
     {
-        string an = default;
-        foreach(var word in words)
+        List<int> an = new List<int>();
+        int total = 0;
+        ListNode tmp = head;
+        while (tmp != null)
         {
-            int sm = 0;
-            for(int i =0;i < word.Length; i++)
-            {
-                sm += weights[word[i] - 'a'];
-                sm %= 26;
-            }
-            char c = (char)((25 - sm) + 'a');
-            an += (c);
+            an.Add(tmp.val);
+            tmp = tmp.next;
         }
-        return an;
+        int sz = an.Count;
+        int mx = 0;
+        for (int i = 0; i < sz / 2; i++)
+        {
+            mx = int.Max(mx, an[i] + an[sz - i - 1]);
+        }
+        return mx;
     }
 }
 internal class Program
@@ -31,7 +43,8 @@ internal class Program
         string[] words = ["abcd", "def", "xyz"];
         int[] weights = [5, 3, 12, 14, 1, 2, 3, 2, 10, 6, 6, 9, 7, 8, 7, 10, 8, 9, 6, 9, 9, 8, 3, 7, 7, 2];
 
-        string result = solution.MapWordWeights(words,weights);
+        ListNode head = new ListNode();
+        int result = solution.PairSum(head);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

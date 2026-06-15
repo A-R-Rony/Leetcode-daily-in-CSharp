@@ -16,23 +16,29 @@ namespace LeetCodePractice;
 
 public class Solution
 {
-    public int PairSum(ListNode head)
+    public ListNode DeleteMiddle(ListNode head)
     {
-        List<int> an = new List<int>();
-        int total = 0;
-        ListNode tmp = head;
-        while (tmp != null)
+        if(head.next == null)
         {
-            an.Add(tmp.val);
-            tmp = tmp.next;
+            return null;
         }
-        int sz = an.Count;
-        int mx = 0;
-        for (int i = 0; i < sz / 2; i++)
+
+        ListNode prev = head;
+        ListNode middle = head;
+        ListNode temp = head;
+        int sz = 1;
+        while (temp.next != null)
         {
-            mx = int.Max(mx, an[i] + an[sz - i - 1]);
+            sz++;
+            if (sz % 2 == 0)
+            {
+                prev = middle;
+                middle = prev.next;
+            }
+            temp = temp.next;
         }
-        return mx;
+        prev.next = middle.next;
+        return head;
     }
 }
 internal class Program
@@ -44,7 +50,7 @@ internal class Program
         int[] weights = [5, 3, 12, 14, 1, 2, 3, 2, 10, 6, 6, 9, 7, 8, 7, 10, 8, 9, 6, 9, 9, 8, 3, 7, 7, 2];
 
         ListNode head = new ListNode();
-        int result = solution.PairSum(head);
+        ListNode result = solution.DeleteMiddle(head);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

@@ -4,41 +4,29 @@ using System.Runtime.InteropServices.Marshalling;
 
 namespace LeetCodePractice;
 
- 
-  public class ListNode {
-      public int val;
-      public ListNode next;
-      public ListNode(int val=0, ListNode next=null) {
-          this.val = val;
-          this.next = next;
-      }
-  }
+
 
 public class Solution
 {
-    public ListNode DeleteMiddle(ListNode head)
+    public string ProcessStr(string s)
     {
-        if(head.next == null)
+        string an = "";
+        for(int i = 0;i < s.Length;i++)
         {
-            return null;
-        }
-
-        ListNode prev = head;
-        ListNode middle = head;
-        ListNode temp = head;
-        int sz = 1;
-        while (temp.next != null)
-        {
-            sz++;
-            if (sz % 2 == 0)
-            {
-                prev = middle;
-                middle = prev.next;
+            if (char.IsLower(s[i]))
+            { 
+                an += s[i];
+                continue;
             }
-            temp = temp.next;
+            if (s[i] == '*' && an.Length > 0)
+            {
+                an = an[..^1];continue;
+            }
+            if (s[i] == '#') an += an;
+            else an = new string(an.Reverse().ToArray());
         }
-        prev.next = middle.next;
-        return head;
+        
+         return an;
     }
 }
 internal class Program
@@ -48,9 +36,8 @@ internal class Program
         Solution solution = new Solution();
         string[] words = ["abcd", "def", "xyz"];
         int[] weights = [5, 3, 12, 14, 1, 2, 3, 2, 10, 6, 6, 9, 7, 8, 7, 10, 8, 9, 6, 9, 9, 8, 3, 7, 7, 2];
-
-        ListNode head = new ListNode();
-        ListNode result = solution.DeleteMiddle(head);
+        string s = "z*#";
+        string result = solution.ProcessStr(s);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

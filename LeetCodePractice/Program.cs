@@ -8,25 +8,11 @@ namespace LeetCodePractice;
 
 public class Solution
 {
-    public string ProcessStr(string s)
+    public double AngleClock(int hour, int minutes)
     {
-        string an = "";
-        for(int i = 0;i < s.Length;i++)
-        {
-            if (char.IsLower(s[i]))
-            { 
-                an += s[i];
-                continue;
-            }
-            if (s[i] == '*' && an.Length > 0)
-            {
-                an = an[..^1];continue;
-            }
-            if (s[i] == '#') an += an;
-            else an = new string(an.Reverse().ToArray());
-        }
-        
-         return an;
+        double H = hour * 30;
+        double M = (5.5) * minutes;
+        return Math.Min(Math.Abs(H - M), 360 - Math.Abs(H - M));
     }
 }
 internal class Program
@@ -37,7 +23,7 @@ internal class Program
         string[] words = ["abcd", "def", "xyz"];
         int[] weights = [5, 3, 12, 14, 1, 2, 3, 2, 10, 6, 6, 9, 7, 8, 7, 10, 8, 9, 6, 9, 9, 8, 3, 7, 7, 2];
         string s = "z*#";
-        string result = solution.ProcessStr(s);
+        double result = solution.AngleClock(12,30);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

@@ -8,23 +8,25 @@ namespace LeetCodePractice;
 
 public class Solution
 {
-    public int MaxIceCream(int[] costs, int coins)
+    public int MaxNumberOfBalloons(string text)
     {
-        Array.Sort(costs);
-        for(int i = 0;i < costs.Length; i++)
+        Dictionary<char, int> cnt = new Dictionary<char, int>();
+        foreach (var c in text)
         {
-            if(coins >= costs[i])
-            {
-                coins -= costs[i];
-                continue;
-            }
-            else
-            {
-                return i;
-            }
+            if (cnt.ContainsKey(c)) cnt[c]++;
+            else cnt[c] = 1;
         }
-        return costs.Length;
-
+        string t = "balloon";
+        int mn = new[]
+        {
+           cnt.GetValueOrDefault('a',0),
+           cnt.GetValueOrDefault('b',0),
+           cnt.GetValueOrDefault('n',0),
+           cnt.GetValueOrDefault('l',0)/2,
+           cnt.GetValueOrDefault('o',0)/2
+        }.Min();
+        
+        return mn;
     }
 }
 internal class Program
@@ -35,7 +37,7 @@ internal class Program
         string[] words = ["abcd", "def", "xyz"];
         int[] weights = [10, 6, 8, 7, 7, 8];
         string s = "z*#";
-        int result = solution.MaxIceCream(weights,5);
+        int result = solution.MaxNumberOfBalloons("nlaebolko");
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

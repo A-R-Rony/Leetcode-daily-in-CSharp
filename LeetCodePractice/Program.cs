@@ -5,28 +5,28 @@ using System.Runtime.InteropServices.Marshalling;
 namespace LeetCodePractice;
 
 
-
 public class Solution
 {
-    public int MaxNumberOfBalloons(string text)
+    public int CountMajoritySubarrays(int[] nums, int target)
     {
-        Dictionary<char, int> cnt = new Dictionary<char, int>();
-        foreach (var c in text)
+        int an = 0;
+        for (int i = 0; i < nums.Length; i++)
         {
-            if (cnt.ContainsKey(c)) cnt[c]++;
-            else cnt[c] = 1;
+            int cn = 0, sz = 0;
+            for(int j = i;j >= 0;j--)
+            {
+                sz++;
+                if (nums[j] == target)
+                {
+                    cn++;
+                }
+                if(cn + cn > sz)
+                {
+                    an++;
+                }
+            }
         }
-        string t = "balloon";
-        int mn = new[]
-        {
-           cnt.GetValueOrDefault('a',0),
-           cnt.GetValueOrDefault('b',0),
-           cnt.GetValueOrDefault('n',0),
-           cnt.GetValueOrDefault('l',0)/2,
-           cnt.GetValueOrDefault('o',0)/2
-        }.Min();
-        
-        return mn;
+        return an;
     }
 }
 internal class Program
@@ -37,7 +37,7 @@ internal class Program
         string[] words = ["abcd", "def", "xyz"];
         int[] weights = [10, 6, 8, 7, 7, 8];
         string s = "z*#";
-        int result = solution.MaxNumberOfBalloons("nlaebolko");
+        int result = solution.ZigZagArrays(3,8,14);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

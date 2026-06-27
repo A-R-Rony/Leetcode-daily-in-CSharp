@@ -7,25 +7,59 @@ namespace LeetCodePractice;
 
 public class Solution
 {
-    public int CountMajoritySubarrays(int[] nums, int target)
+    const int MAXN = (int)1e9;
+    public int MaximumLength(int[] nums)
     {
-        int an = 0;
-        for (int i = 0; i < nums.Length; i++)
+        Dictionary<int, int> cnt = new Dictionary<int, int>();
+        int an = nums.Count(x => x == 1);
+
+        foreach (var num in nums)
         {
-            int cn = 0, sz = 0;
-            for(int j = i;j >= 0;j--)
+            if (!cnt.ContainsKey(num)) cnt[num] = 1;
+            else cnt[num]++;
+        }
+        foreach (var num in nums)
+        {
+            if (num == 1) continue;
+            int temp = num;
+            int rs = 0;
+            List<int> l = new List<int>();
+
+            while (temp <= MAXN)
             {
-                sz++;
-                if (nums[j] == target)
+                if (!cnt.ContainsKey(temp)) break;
+                l.Add(temp);
+
+                if (MAXN / temp >= temp)
                 {
-                    cn++;
+                    temp *= temp;
                 }
-                if(cn + cn > sz)
+                else
                 {
-                    an++;
+                    break;
                 }
             }
+
+            //Console.WriteLine(string.Join(", ", l));
+            l.Sort();
+
+            for (int i = 0; i < l.Count; i++)
+            {
+                if (cnt[l[i]] >= 2)
+                {
+                    rs += 2;
+                }
+                else
+                {
+                    rs += 1;
+                    break;
+                }
+            }
+            if (rs % 2 == 0) rs--;
+            //Console.WriteLine($"rs: {rs}");
+            an = int.Max(an, rs);
         }
+        if (an % 2 == 0) an--;
         return an;
     }
 }
@@ -34,10 +68,10 @@ internal class Program
     static void Main(string[] args)
     {
         Solution solution = new Solution();
-        string[] words = ["abcd", "def", "xyz"];
-        int[] weights = [10, 6, 8, 7, 7, 8];
+         
+        int[] nums = [1, 1, 1, 1, 1];
         string s = "z*#";
-        int result = solution.ZigZagArrays(3,8,14);
+        int result = solution.MaximumLength(nums);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

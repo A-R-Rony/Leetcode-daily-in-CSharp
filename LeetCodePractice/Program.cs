@@ -8,16 +8,12 @@ namespace LeetCodePractice;
 
 public class Solution
 {
-    
-    public int MaximumElementAfterDecrementingAndRearranging(int[] arr)
+    public int NumOfStrings(string[] patterns, string word)
     {
-        int n = arr.Length;
-        Array.Sort(arr);
-        int an = 1;
-        Console.Error.WriteLine($"x = {an}");
-        for (int i = 1;i < n;i++)
+        int an = 0;
+        foreach(var p in patterns)
         {
-            an = int.Min(an + 1, arr[i]);
+            an += (word.Contains(p) ? 1 : 0);
         }
         return an;
     }

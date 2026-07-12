@@ -1,105 +1,35 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.X86;
 
 namespace LeetCodePractice;
 
-public class Dsu
-{
-    int[] Parent;
-    int N;
-    public Dsu(int n)
-    {
-        N = n;
-        Parent = new int[N+1];
-        for (int i = 0; i <= N; i++)
-        {
-            Parent[i] = i;
-        }
-    }
-
-    public int Find(int u)
-    {
-        if (Parent[u] == u) return u;
-        return Parent[u] = Find(Parent[u]);
-    }
-    public void Union(int u, int v)
-    {
-        Parent[v] = u;
-    }
-}
 public class Solution
 {
-    int[] Nums;
-    int N, MaxDiff;
-    List<int>[] G;
-    int[] Parents;
-    int UpperBound(int x)
+    public int[] ArrayRankTransform(int[] arr)
     {
-        int l = 0, r = N - 1, an = (x >= Nums[N - 1] ? N : -1);
-        while (l <= r)
+        Dictionary<int, int> pos = new Dictionary<int, int>();
+        int[] b = (int[])arr.Clone();
+
+        Array.Sort(b);
+        int cnt = 1;
+
+
+        for (int i = 0; i < arr.Length; i++)
         {
-            int md = l + (r - l) / 2;
-            if (Nums[md] <= x)
-            {
-                an = md;
-                l = md + 1;
-            }
-            else
-            {
-                r = md - 1;
-            }
+            if (pos.ContainsKey(b[i])) continue;
+            pos[b[i]] = cnt++;
+        }
+        int[] an = new int[b.Length];
+        for (int i = 0; i < b.Length; i++)
+        {
+            an[i] = pos[arr[i]];
         }
         return an;
-    }
-    public bool[] PathExistenceQueries(int n, int[] nums, int maxDiff, int[][] queries)
-    {
-        this.N = n;
-        this.Nums = nums;
-        this.MaxDiff = maxDiff;
-        G = new List<int>[n + 1];
-        Parents = new int[n + 1];
-
-        for (int i = 0; i <= n; i++)
-        {
-            Parents[i] = i;
-        }
-
-        for (int i = 0; i <= n; i++)
-        {
-            G[i] = new List<int>();
-        }
-
-        Dsu dsu = new Dsu(N);
-
-        for (int i = 0; i < n; i++)
-        {
-            int ub = UpperBound(nums[i] + maxDiff);
-
-            int pi = dsu.Find(i);
-            int pub = dsu.Find(ub);
-
-            if (pi != pub)
-            {
-                dsu.Union(pi, pub);
-            }
-        }
-
-        int m = queries.Length;
-        bool[] an = new bool[m];
-
-        for (int i = 0; i < m; i++)
-        {
-            int u = queries[i][0];
-            int v = queries[i][1];
-
-            if (dsu.Find(u) == dsu.Find(v)) an[i] = true;
-            else an[i] = false;
-        }
-        return an;
-
     }
 }
 internal class Program
@@ -108,13 +38,13 @@ internal class Program
     {
         Solution solution = new Solution();
 
-        int[] nums = [2, 5, 6, 8];
-        int[][] edges = [[0, 1], [0, 2], [1, 3], [2, 3]];
+        int[] nums = [37, 12, 28, 9, 100, 56, 80, 5, 12];
+        int[][] edges = [[0, 1], [0, 2], [1, 2], [3, 4], [3, 5]];
         bool[] online = [true, true, true, false, true];
 
 
         string s = "z*#";
-        bool[] result = solution.PathExistenceQueries(4, nums, 2, edges);
+        int[] result = solution.ArrayRankTransform(nums);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

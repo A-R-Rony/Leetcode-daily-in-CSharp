@@ -10,26 +10,30 @@ namespace LeetCodePractice;
 
 public class Solution
 {
-    public int[] ArrayRankTransform(int[] arr)
+    int f(int x, int i, int num)
     {
-        Dictionary<int, int> pos = new Dictionary<int, int>();
-        int[] b = (int[])arr.Clone();
-
-        Array.Sort(b);
-        int cnt = 1;
-
-
-        for (int i = 0; i < arr.Length; i++)
+        if (i == 0)
         {
-            if (pos.ContainsKey(b[i])) continue;
-            pos[b[i]] = cnt++;
+            return num;
         }
-        int[] an = new int[b.Length];
-        for (int i = 0; i < b.Length; i++)
+
+        return f(x + 1, i - 1, (num * 10) + x);
+    }
+    public IList<int> SequentialDigits(int low, int high)
+    {
+        List<int> l = new List<int>();
+        for (int i = 1; i <= 10; i++)
         {
-            an[i] = pos[arr[i]];
+            for (int j = 1; j <= 9; j++)
+            {
+                if ((9 - j) + 1 >= i)
+                {
+                    l.Add(f(j, i, 0));
+                }
+            }
         }
-        return an;
+
+        return l.Where(x => x >= low && x <= high).ToList()       
     }
 }
 internal class Program
@@ -44,7 +48,7 @@ internal class Program
 
 
         string s = "z*#";
-        int[] result = solution.ArrayRankTransform(nums);
+        IList<int> result = solution.SequentialDigits(10,100);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }

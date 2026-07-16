@@ -10,30 +10,30 @@ namespace LeetCodePractice;
 
 public class Solution
 {
-    int f(int x, int i, int num)
+    public long GcdSum(int[] nums)
     {
-        if (i == 0)
-        {
-            return num;
-        }
+        int n = nums.Length;
+        int[] pre = new int[n];
+        int[] mx = new int[n];
 
-        return f(x + 1, i - 1, (num * 10) + x);
+        for (int id = 0; id < n; id++)
+        {
+            mx[id] = int.Max((id-1 >= 0 ? mx[id - 1] : 0), nums[id]);
+            pre[id] = Gcd(mx[id], nums[id]);
+        }
+        Array.Sort(pre);
+        long sm = 0;
+        int i = 0, j = n - 1;
+        while(i < j)
+        {
+            sm += Gcd(pre[i++], pre[j--]);
+        }
+        return sm;
     }
-    public IList<int> SequentialDigits(int low, int high)
+    public int Gcd(int a, int b)
     {
-        List<int> l = new List<int>();
-        for (int i = 1; i <= 10; i++)
-        {
-            for (int j = 1; j <= 9; j++)
-            {
-                if ((9 - j) + 1 >= i)
-                {
-                    l.Add(f(j, i, 0));
-                }
-            }
-        }
-
-        return l.Where(x => x >= low && x <= high).ToList()       
+        if (b == 0) return a;
+        return Gcd(b, a % b);
     }
 }
 internal class Program
@@ -42,13 +42,13 @@ internal class Program
     {
         Solution solution = new Solution();
 
-        int[] nums = [37, 12, 28, 9, 100, 56, 80, 5, 12];
+        int[] nums = [10, 5, 7];
         int[][] edges = [[0, 1], [0, 2], [1, 2], [3, 4], [3, 5]];
         bool[] online = [true, true, true, false, true];
 
 
         string s = "z*#";
-        IList<int> result = solution.SequentialDigits(10,100);
+        long result = solution.GcdSum(nums);
         Console.WriteLine(string.Join(", ", result));
         Console.ReadLine();
     }
